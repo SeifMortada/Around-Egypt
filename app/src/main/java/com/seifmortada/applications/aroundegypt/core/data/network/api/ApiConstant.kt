@@ -1,4 +1,4 @@
-package com.seifmortada.applications.aroundegypt.core.network.api
+package com.seifmortada.applications.aroundegypt.core.data.network.api
 
 object ApiConstant {
     const val BASE_URL = "aroundegypt.34ml.com/"
