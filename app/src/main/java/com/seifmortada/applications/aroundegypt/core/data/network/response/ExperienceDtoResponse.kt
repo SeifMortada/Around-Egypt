@@ -1,4 +1,4 @@
-package com.seifmortada.applications.aroundegypt.core.network.response
+package com.seifmortada.applications.aroundegypt.core.data.network.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

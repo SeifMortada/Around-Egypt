@@ -1,7 +1,7 @@
-package com.seifmortada.applications.aroundegypt.core.network.api
+package com.seifmortada.applications.aroundegypt.core.data.network.api
 
-import com.seifmortada.applications.aroundegypt.core.network.api.ApiConstant.GET_RECOMMENDED_Experiences_ENDPOINT
-import com.seifmortada.applications.aroundegypt.core.network.response.ExperienceDtoResponse
+import com.seifmortada.applications.aroundegypt.core.data.network.api.ApiConstant.GET_RECOMMENDED_Experiences_ENDPOINT
+import com.seifmortada.applications.aroundegypt.core.data.network.response.ExperienceDtoResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
