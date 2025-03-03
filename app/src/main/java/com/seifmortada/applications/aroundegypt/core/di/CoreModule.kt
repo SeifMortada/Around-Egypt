@@ -17,10 +17,7 @@ val coreModule = module {
     single {
         get<ExperienceDatabase>().dao
     }
-
-    single {
-        networkModule
+    single<ExperienceRepository>{
+        ExperienceRepositoryImpl(experienceService = get(), experienceDao = get())
     }
-
-    singleOf(::ExperienceRepositoryImpl).bind<ExperienceRepository>()
 }

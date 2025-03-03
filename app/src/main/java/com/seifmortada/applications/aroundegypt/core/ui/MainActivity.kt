@@ -11,7 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.seifmortada.applications.aroundegypt.core.ui.navigation.Destinations
 import com.seifmortada.applications.aroundegypt.core.ui.theme.AroundEgyptTheme
+import com.seifmortada.applications.aroundegypt.home.presentation.HomeRoute
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,29 +24,23 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AroundEgyptTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                AroundEgyptNavGraph()
             }
         }
     }
+
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
+fun AroundEgyptNavGraph(modifier: Modifier = Modifier) {
+    val navController = rememberNavController()
+    NavHost(
+        navController = navController,
+        startDestination = Destinations.HOME,
         modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    AroundEgyptTheme {
-        Greeting("Android")
+    ) {
+        composable<Destinations.HOME> {
+            HomeRoute()
+        }
     }
 }
