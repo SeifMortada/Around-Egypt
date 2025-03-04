@@ -4,36 +4,32 @@
 
 https://github.com/user-attachments/assets/ba73fbb3-4529-4920-a1ad-d291be835162
 
-
 ## 📌 Overview
 
-**Around Egypt** is a modern Android application designed to provide a seamless experience for exploring various locations and experiences across Egypt. The app is built using the latest Android development technologies and follows the MVVM architecture for better maintainability and scalability.
+**Around Egypt** is an Android app that lets users explore various experiences across Egypt. The app displays recent and recommended experiences on the home screen, where users can like experiences and search for specific ones. When a user likes an experience, the like count updates automatically, and views are also tracked. Clicking on an experience opens the detail screen, showing full details and allowing users to like it from there as well.
 
 ---
 
 ## 🚀 Technologies Used
 
-- **Kotlin** - Primary programming language for Android development.
-- **MVVM Architecture** - Ensures separation of concerns and better code organization.
-- **Jetpack Compose** - Modern UI toolkit for building a declarative UI.
-- **Retrofit** - For making efficient network calls and consuming APIs.
-- **Room Database** - Local data persistence with Room Database.
-- **Kotlin Coroutines** - For managing asynchronous tasks efficiently.
-- **StateFlow & SharedFlow** - Used for handling reactive data flows.
-- **Unit Testing & Instrumentation Testing** - Ensuring app reliability and correctness.
+- **Kotlin** - Main programming language.
+- **MVVM Architecture** - Ensures better code organization and maintainability.
+- **Jetpack Compose** - Used for building the UI.
+- **Retrofit** - Handles API requests.
+- **Room Database** - Stores data locally.
+- **Kotlin Coroutines** - Manages background tasks.
+- **StateFlow & SharedFlow** - Handles reactive data updates.
+- **Unit Testing & Instrumentation Testing** - Improves app reliability.
 
 ---
 
 ## 📂 Project Structure
 
-The project is modularized for scalability and maintainability:
+The project is structured into modules for better organization:
 
-- **core**: Contains base classes for networking, database, repositories, and mappers, along with dependency injection setup.
-- **detail**: Conatins DetailScreen displaying a single experience selected by the user and viewModel in Presentation and in DI is the detail Module . 
-- **home**: Houses HomeScreen and HomeViewModel, displaying recent and recommended experiences and domain which has SearchExperienceUseCase and DI includes the Home Module
+- **core**: Contains shared components like networking, database, repositories, mappers, and dependency injection setup.
+- **home**: Handles the home screen, where users can see recent and recommended experiences, like them, and search. It includes `HomeScreen`, `HomeViewModel`, `SearchExperienceUseCase`, and dependency injection setup.
+- **detail**: Manages the detail screen, displaying full experience details and allowing users to like them. It includes `DetailScreen`, `DetailViewModel`, and dependency injection setup.
 
-
-
-
-
+This modular structure makes the app scalable and easy to maintain.
 
