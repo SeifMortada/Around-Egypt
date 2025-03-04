@@ -29,8 +29,8 @@ https://github.com/user-attachments/assets/ba73fbb3-4529-4920-a1ad-d291be835162
 The project is modularized for scalability and maintainability:
 
 - **core**: Contains base classes for networking, database, repositories, and mappers, along with dependency injection setup.
-- **detail**: Manages the DetailScreen, displaying a single experience selected by the user.
-- **home**: Houses HomeScreen and HomeViewModel, displaying recent and recommended experiences.
+- **detail**: Conatins DetailScreen displaying a single experience selected by the user and viewModel in Presentation and in DI is the detail Module . 
+- **home**: Houses HomeScreen and HomeViewModel, displaying recent and recommended experiences and domain which has SearchExperienceUseCase and DI includes the Home Module
 
 
 
