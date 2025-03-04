@@ -7,7 +7,9 @@ interface ExperienceRepository {
     fun getRecentExperiences(): Flow<ExperienceResult<List<Experience>>>
     fun searchExperience(query: String): Flow<ExperienceResult<List<Experience>>>
     suspend fun getSingleExperience(id: String): ExperienceResult<Experience>
-    suspend fun likeExperience(id: String): ExperienceResult<List<Experience>>
-    suspend fun upsertExperiences(experiences: List<Experience>)
-    suspend fun clearExperiences()
+    suspend fun likeExperience(id: String): ExperienceResult<Boolean>
+    suspend fun upsertRecentExperiences(experiences: List<Experience>)
+    suspend fun upsertRecommendedExperiences(experiences: List<Experience>)
+    suspend fun clearRecentExperiences()
+    suspend fun clearRecommendedExperiences()
 }

@@ -63,4 +63,25 @@ class HomeViewModel(private val experienceRepository: ExperienceRepository) : Vi
             }
         }
     }
+
+    fun likeExperience(id: String) = viewModelScope.launch {
+        val result = experienceRepository.likeExperience(id)
+        when (result) {
+            is ExperienceResult.Error -> {
+                _errorState.update { result.errorMessage }
+                _loadingState.update { false }
+            }
+
+            is ExperienceResult.Loading -> _loadingState.update { true }
+            is ExperienceResult.Success -> {
+                _loadingState.update { false }
+                refresh()
+            }
+        }
+    }
+
+    private fun refresh() {
+        fetchRecommendedExperiences()
+        fetchRecentExperiences()
+    }
 }

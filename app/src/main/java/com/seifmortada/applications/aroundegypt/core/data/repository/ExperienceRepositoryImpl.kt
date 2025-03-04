@@ -2,7 +2,8 @@ package com.seifmortada.applications.aroundegypt.core.data.repository
 
 import com.seifmortada.applications.aroundegypt.core.data.local.ExperienceDao
 import com.seifmortada.applications.aroundegypt.core.data.mappers.toExperience
-import com.seifmortada.applications.aroundegypt.core.data.mappers.toExperienceEntity
+import com.seifmortada.applications.aroundegypt.core.data.mappers.toRecentExperiencesEntity
+import com.seifmortada.applications.aroundegypt.core.data.mappers.toRecommendedExperienceEntity
 import com.seifmortada.applications.aroundegypt.core.data.network.api.ExperienceService
 import com.seifmortada.applications.aroundegypt.core.domain.Experience
 import com.seifmortada.applications.aroundegypt.core.domain.ExperienceRepository
@@ -23,11 +24,14 @@ class ExperienceRepositoryImpl(
                 experienceDao.getRecommendedExperiences().map { it.toExperience() }
             if (cachedExperiences.isNotEmpty()) {
                 emit(ExperienceResult.Success(cachedExperiences))
+                return@flow
             }
             val response = experienceService.getRecommendedExperiences()
             if (response.isSuccessful && response.body() != null) {
-                val experiences = response.body()!!.data.map { it.toExperience() }
-                experienceDao.upsertExperiences(experiences.map { it.toExperienceEntity() })
+                val experiences = response.body()!!.data
+                    .filter { it.recommended == 1 }
+                    .map { it.toExperience() }
+                experienceDao.upsertRecommendedExperiences(experiences.map { it.toRecommendedExperienceEntity() })
                 emit(ExperienceResult.Success(experiences))
             } else {
                 emit(ExperienceResult.Error("Failed to fetch experiences"))
@@ -38,14 +42,15 @@ class ExperienceRepositoryImpl(
         flow {
             emit(ExperienceResult.Loading())
             val cachedExperiences =
-                experienceDao.getRecommendedExperiences().map { it.toExperience() }
+                experienceDao.getRecentExperiences().map { it.toExperience() }
             if (cachedExperiences.isNotEmpty()) {
                 emit(ExperienceResult.Success(cachedExperiences))
+                return@flow
             }
             val response = experienceService.getRecentExperiences()
             if (response.isSuccessful && response.body() != null) {
                 val experiences = response.body()!!.data.map { it.toExperience() }
-                experienceDao.upsertExperiences(experiences.map { it.toExperienceEntity() })
+                experienceDao.upsertRecentExperiences(experiences.map { it.toRecentExperiencesEntity() })
                 emit(ExperienceResult.Success(experiences))
             } else {
                 emit(ExperienceResult.Error("Failed to fetch recent experiences"))
@@ -79,11 +84,26 @@ class ExperienceRepositoryImpl(
         }
     }
 
-    override suspend fun likeExperience(id: String): ExperienceResult<List<Experience>> {
+    override suspend fun likeExperience(id: String): ExperienceResult<Boolean> {
         return try {
             val response = experienceService.likeExperience(id)
             if (response.isSuccessful && response.body() != null) {
-                ExperienceResult.Success(response.body()!!.data.map { it.toExperience() })
+                if (response.body()!!.meta.code == 200) {
+                    if (experienceDao.getRecommendedExperiences().any { it.experienceId == id }) {
+                        experienceDao.updateRecommendedExperience(
+                            id,
+                            response.body()!!.newLikesCount.toString(),
+                            true
+                        )
+                    } else {
+                        experienceDao.updateRecentExperience(
+                            id,
+                            response.body()!!.newLikesCount.toString(),
+                            true
+                        )
+                    }
+                    ExperienceResult.Success(true)
+                } else ExperienceResult.Error(response.body()!!.meta.errors[0].message)
             } else {
                 ExperienceResult.Error("Failed to like experience")
             }
@@ -92,11 +112,19 @@ class ExperienceRepositoryImpl(
         }
     }
 
-    override suspend fun upsertExperiences(experiences: List<Experience>) {
-        experienceDao.upsertExperiences(experiences.map { it.toExperienceEntity() })
+    override suspend fun upsertRecentExperiences(experiences: List<Experience>) {
+        experienceDao.upsertRecentExperiences(experiences.map { it.toRecentExperiencesEntity() })
     }
 
-    override suspend fun clearExperiences() {
-        experienceDao.clearExperiences()
+    override suspend fun upsertRecommendedExperiences(experiences: List<Experience>) {
+        experienceDao.upsertRecommendedExperiences(experiences.map { it.toRecommendedExperienceEntity() })
+    }
+
+    override suspend fun clearRecentExperiences() {
+        experienceDao.clearRecentExperiences()
+    }
+
+    override suspend fun clearRecommendedExperiences() {
+        experienceDao.clearRecommendedExperiences()
     }
 }

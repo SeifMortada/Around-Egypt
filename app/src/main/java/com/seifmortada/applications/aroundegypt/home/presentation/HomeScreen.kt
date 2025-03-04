@@ -1,23 +1,17 @@
 package com.seifmortada.applications.aroundegypt.home.presentation
 
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -25,33 +19,26 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.RemoveRedEye
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -59,19 +46,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import coil.compose.rememberImagePainter
 import com.seifmortada.applications.aroundegypt.core.domain.Experience
 import org.koin.androidx.compose.koinViewModel
 
@@ -88,25 +72,23 @@ fun HomeRoute(
         loadingState = loadingState,
         errorState = errorState,
         recommendedExperiencesState = recommendedExperiencesState,
-        recentExperiencesState = recentExperiencesState
+        recentExperiencesState = recentExperiencesState,
+        onExperienceClick = {},
+        onLikeClick = viewModel::likeExperience
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     loadingState: Boolean,
     errorState: String?,
     recommendedExperiencesState: List<Experience>,
     recentExperiencesState: List<Experience>,
+    onExperienceClick: (String) -> Unit = {},
+    onLikeClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
-        state = rememberTopAppBarState()
-    )
-    Scaffold(modifier = Modifier
-        .nestedScroll(scrollBehavior.nestedScrollConnection)
-        .fillMaxSize(),
+    Scaffold(modifier = Modifier.fillMaxSize(),
         topBar = {
             SearchToolbar(
                 onBackClick = {},
@@ -116,7 +98,11 @@ fun HomeScreen(
             )
         })
     { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
             Text(
                 text = "Welcome!",
                 fontSize = 20.sp,
@@ -143,7 +129,7 @@ fun HomeScreen(
             } else {
                 LazyRow(modifier = Modifier.fillMaxWidth()) {
                     items(recommendedExperiencesState) { item ->
-                        ExperienceCard(experience =item,{})
+                        ExperienceCard(experience = item, onLikeClick)
                     }
                 }
 
@@ -153,12 +139,14 @@ fun HomeScreen(
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(16.dp)
                 )
-                LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f)) {
-                    items(recentExperiencesState) { item ->
-                        ExperienceCard(
-                            experience = item,
-                            {},
-                        )
+                Box(modifier = Modifier.weight(1f)) {
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        items(recentExperiencesState) { item ->
+                            ExperienceCard(
+                                experience = item,
+                                onLikeClick,
+                            )
+                        }
                     }
                 }
             }
@@ -186,7 +174,35 @@ fun SearchToolbar(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun ExperienceCard(
+    experience: Experience,
+    onLikeClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .padding(8.dp)
+            .width(350.dp)
+            .height(250.dp),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(1f)
+        ) {
+            ImageSection(experience.imgSrc)
+            TitleSection(experience.title)
+            FooterSection(
+                experience,
+                onLikeClick
+            )
+        }
+    }
+}
+
 @Composable
 private fun SearchTextField(
     searchQuery: String,
@@ -267,31 +283,6 @@ private fun SearchTextField(
         focusRequester.requestFocus()
     }
 }
-@Composable
-fun ExperienceCard(
-    experience: Experience,
-    onLikeClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-            .padding(8.dp)
-            .width(350.dp)
-            .height(250.dp),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
-    ) {
-        Column(modifier = Modifier.fillMaxSize().weight(1f)) {
-            ImageSection(experience.imgSrc)
-            TitleSection(experience.title)
-            FooterSection(
-                views = experience.numberOfViews,
-                likes = experience.numberOfLikes,
-                onLikeClick = onLikeClick
-            )
-        }
-    }
-}
 
 @Composable
 private fun ImageSection(imageUrl: String) {
@@ -301,7 +292,7 @@ private fun ImageSection(imageUrl: String) {
         contentScale = ContentScale.Crop,
         modifier = Modifier
             .fillMaxWidth()
-            .height(150.dp) // Adjusted for better spacing
+            .height(150.dp)
     )
 }
 
@@ -316,15 +307,18 @@ private fun TitleSection(title: String) {
 }
 
 @Composable
-private fun FooterSection(views: Int, likes: Int, onLikeClick: () -> Unit) {
+private fun FooterSection(
+    experience: Experience,
+    onLikeClick: (String) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        ViewCount(views)
-        LikeSection(likes, onLikeClick)
+        ViewCount(experience.numberOfViews)
+        LikeSection(experience, onLikeClick)
     }
 }
 
@@ -342,16 +336,21 @@ private fun ViewCount(views: Int) {
 }
 
 @Composable
-private fun LikeSection(likes: Int, onLikeClick: () -> Unit) {
+private fun LikeSection(
+    experience: Experience,
+    onLikeClick: (String) -> Unit
+) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        IconButton(onClick = onLikeClick) {
+        IconButton(
+            enabled = if (experience.isLiked) false else true,
+            onClick = { onLikeClick(experience.id) }) {
             Icon(
-                imageVector = Icons.Filled.Favorite,
+                imageVector = if (experience.isLiked) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                 contentDescription = "Like",
                 tint = Color.Red
             )
         }
-        Text(text = likes.toString(), fontSize = 14.sp)
+        Text(text = experience.numberOfLikes.toString(), fontSize = 14.sp)
     }
 }
 
@@ -369,14 +368,16 @@ private fun HomeScreenPreview() {
                 imgSrc = "https://example.com/image.jpg",
                 description = "A tour of the Pyramids",
                 numberOfLikes = 1000,
-                numberOfViews = 500
+                numberOfViews = 500,
+                recommended = 0,
+                isLiked = false
             ),
             Experience(
                 "2", "Nile Cruise",
                 description = "A cruise through the Nile",
                 "https://aroundegypt-production.s3.eu-central-1.amazonaws.com/2/buEw5QAr0MJf8HCLqd3TdlbJ8ETZOP-metaZnZDMUhJMjBNNkM3T1ZaVmVwak1sSWxpdEJPR2VvSzZ1WHJoaVQydC5qcGVn-.jpg?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIASZMRQEMKBKVP4NHO%2F20250303%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20250303T075136Z&X-Amz-SignedHeaders=host&X-Amz-Expires=172800&X-Amz-Signature=75bd1f766a5655f4ec47f1c7af0cf46251acc3314d06d87bcdc06970be753f6",
                 2000,
-                800
+                800, 1, false
             )
         ),
         recentExperiencesState = listOf(
@@ -386,7 +387,7 @@ private fun HomeScreenPreview() {
                 description = "A safari in the desert",
                 "https://aroundegypt-production.s3.eu-central-1.amazonaws.com/51/VGaX2MatfRrmisLpAwch92Za4jjuNB-metaYjdtQm9mT2VLOUFWa2hScXFGWmlsUmxOWjlLU0lNdG5NcWM3dnVSUS5qcGVn-.jpg?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIASZMRQEMKBKVP4NHO%2F20250303%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20250303T075136Z&X-Amz-SignedHeaders=host&X-Amz-Expires=172800&X-Amz-Signature=831696b262c5c9799b9f144acb2e3666b8e050aba5e31a899ac0f7396e278866",
                 500,
-                300
+                300, 0, true
             )
         )
     )
