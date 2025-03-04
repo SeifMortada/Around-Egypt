@@ -58,17 +58,13 @@ class ExperienceRepositoryImpl(
         }.catch { e -> emit(ExperienceResult.Error(e.message ?: "Unknown error")) }
 
 
-    override fun searchExperience(query: String): Flow<ExperienceResult<List<Experience>>> =
-        flow {
-            emit(ExperienceResult.Loading())
-            val response = experienceService.searchExperiences(query)
-            if (response.isSuccessful && response.body() != null) {
-                val experiences = response.body()!!.data.map { it.toExperience() }
-                emit(ExperienceResult.Success(experiences))
-            } else {
-                emit(ExperienceResult.Error("Failed to fetch search results"))
-            }
-        }.catch { e -> emit(ExperienceResult.Error(e.message ?: "Unknown error")) }
+    override suspend fun searchExperience(query: String): List<Experience> {
+        val response = experienceService.searchExperiences(query)
+        if (response.isSuccessful && response.body() != null) {
+            return response.body()!!.data.map { it.toExperience() }
+        }
+        return emptyList()
+    }
 
 
     override suspend fun getSingleExperience(id: String): ExperienceResult<Experience> {

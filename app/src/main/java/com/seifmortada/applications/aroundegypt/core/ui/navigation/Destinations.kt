@@ -8,6 +8,6 @@ object Destinations {
     data object HOME
 
     @Serializable
-    data object DETAILS
+    data class DETAILS(val experienceId: String)
 
 }

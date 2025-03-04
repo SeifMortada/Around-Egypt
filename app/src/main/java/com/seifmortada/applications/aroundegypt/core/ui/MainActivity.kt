@@ -40,7 +40,12 @@ fun AroundEgyptNavGraph(modifier: Modifier = Modifier) {
         modifier = modifier
     ) {
         composable<Destinations.HOME> {
-            HomeRoute()
+            HomeRoute(
+                onExperienceClick = { experienceId ->
+                    navController.navigate(Destinations.DETAILS(experienceId))
+                }
+            )
         }
+        composable<Destinations.DETAILS> {  }
     }
 }
