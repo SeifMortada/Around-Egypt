@@ -17,7 +17,7 @@ https://github.com/user-attachments/assets/ba73fbb3-4529-4920-a1ad-d291be835162
 - **MVVM Architecture** - Ensures separation of concerns and better code organization.
 - **Jetpack Compose** - Modern UI toolkit for building a declarative UI.
 - **Retrofit** - For making efficient network calls and consuming APIs.
-- **Room Database** - Local data persistence with SQLite.
+- **Room Database** - Local data persistence with Room Database.
 - **Kotlin Coroutines** - For managing asynchronous tasks efficiently.
 - **StateFlow & SharedFlow** - Used for handling reactive data flows.
 - **Unit Testing & Instrumentation Testing** - Ensuring app reliability and correctness.
