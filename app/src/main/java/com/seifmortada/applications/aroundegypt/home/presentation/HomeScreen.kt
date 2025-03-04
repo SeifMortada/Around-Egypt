@@ -125,12 +125,15 @@ fun HomeScreen(
         })
     { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxSize()
-                .padding(paddingValues)
-                ,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
             verticalArrangement = Arrangement.Center,
         ) {
-            if (loadingState)Box(modifier=Modifier.fillMaxSize()) { CircularProgressIndicator() }
+            if (loadingState) Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) { CircularProgressIndicator() }
             if (errorState != null) {
                 Box {
                     Text(text = "Error: $errorState")
@@ -395,7 +398,7 @@ private fun ViewCount(views: Int) {
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(text = views.toString(), fontSize = 14.sp, color = Color.White)
-        }
+    }
 }
 
 @Composable
@@ -434,7 +437,7 @@ private fun HomeScreenPreview() {
                 numberOfViews = 500,
                 recommended = 0,
                 isLiked = false,
-                address=""
+                address = ""
             ),
             Experience(
                 "2", "Nile Cruise",
