@@ -14,7 +14,8 @@ fun RecommendedExperienceEntity.toExperience(): Experience {
         numberOfViews = numberOfViews,
         numberOfLikes = numberOfLikes,
         recommended = recommended,
-        isLiked = isLiked
+        isLiked = isLiked,
+        address = address
     )
 }
 fun RecentExperiencesEntity.toExperience(): Experience {
@@ -26,7 +27,8 @@ fun RecentExperiencesEntity.toExperience(): Experience {
         numberOfViews = numberOfViews,
         numberOfLikes = numberOfLikes,
         recommended = recommended,
-        isLiked = isLiked
+        isLiked = isLiked,
+        address = address
     )
 }
 
@@ -39,7 +41,8 @@ fun Experience.toRecommendedExperienceEntity(): RecommendedExperienceEntity {
         numberOfViews = numberOfViews,
         numberOfLikes = numberOfLikes,
         recommended = recommended,
-        isLiked = isLiked
+        isLiked = isLiked,
+        address = address
     )
 }
 fun Experience.toRecentExperiencesEntity(): RecentExperiencesEntity {
@@ -51,7 +54,8 @@ fun Experience.toRecentExperiencesEntity(): RecentExperiencesEntity {
         numberOfViews = numberOfViews,
         numberOfLikes = numberOfLikes,
         recommended = recommended,
-        isLiked = isLiked
+        isLiked = isLiked,
+        address = address
     )
 }
 fun ExperienceItemDto.toExperience(): Experience {
@@ -63,6 +67,7 @@ fun ExperienceItemDto.toExperience(): Experience {
         numberOfViews = numberOfViews,
         numberOfLikes = numberOfLikes,
         recommended = recommended,
-        isLiked = false
+        isLiked = false,
+        address = address
     )
 }

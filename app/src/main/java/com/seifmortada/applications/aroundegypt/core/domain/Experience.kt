@@ -11,5 +11,6 @@ data class Experience(
     val numberOfViews: Int,
     val numberOfLikes: Int,
     val recommended: Int,
-    val isLiked: Boolean
+    val isLiked: Boolean,
+    val address:String
 )

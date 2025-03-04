@@ -15,6 +15,7 @@ data class ExperienceItemDto(
     val title: String,
     val description: String,
     val recommended: Int,
+    val address: String,
     @SerialName("cover_photo") val imgSrc: String,
     @SerialName("views_no") val numberOfViews: Int,
     @SerialName("likes_no") val numberOfLikes: Int

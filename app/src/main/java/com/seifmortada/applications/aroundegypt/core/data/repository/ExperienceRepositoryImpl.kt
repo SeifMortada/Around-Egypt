@@ -71,7 +71,7 @@ class ExperienceRepositoryImpl(
         return try {
             val response = experienceService.getSingleExperience(id)
             if (response.isSuccessful && response.body() != null) {
-                ExperienceResult.Success(response.body()!!.data.map { it.toExperience() }[0])
+                ExperienceResult.Success(response.body()!!.data.toExperience())
             } else {
                 ExperienceResult.Error("Failed to fetch experience")
             }
