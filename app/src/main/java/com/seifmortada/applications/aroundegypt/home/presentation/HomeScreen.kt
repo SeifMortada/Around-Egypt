@@ -126,11 +126,14 @@ fun HomeScreen(
     { paddingValues ->
         Column(
             modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(paddingValues),
             verticalArrangement = Arrangement.Center,
         ) {
-            if (loadingState) CircularProgressIndicator()
+            if (loadingState) Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) { CircularProgressIndicator() }
             if (errorState != null) {
                 Box {
                     Text(text = "Error: $errorState")
@@ -164,7 +167,7 @@ fun HomeScreen(
                     text = "Now you can explore any experience in 360 degrees and get all the details about it all in one place",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(horizontal = 8.dp)
                 )
                 Text(
                     text = "Recommended Experiences",
@@ -390,10 +393,11 @@ private fun ViewCount(views: Int) {
         Icon(
             imageVector = Icons.Outlined.RemoveRedEye,
             contentDescription = "Views",
-            modifier = Modifier.size(16.dp)
+            modifier = Modifier.size(16.dp),
+            tint = Color.White
         )
         Spacer(modifier = Modifier.width(4.dp))
-        Text(text = views.toString(), fontSize = 14.sp)
+        Text(text = views.toString(), fontSize = 14.sp, color = Color.White)
     }
 }
 
@@ -404,7 +408,7 @@ private fun LikeSection(
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         IconButton(
-            enabled = if (experience.isLiked) false else true,
+            enabled = !experience.isLiked,
             onClick = { onLikeClick(experience.id) }) {
             Icon(
                 imageVector = if (experience.isLiked) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
@@ -432,14 +436,16 @@ private fun HomeScreenPreview() {
                 numberOfLikes = 1000,
                 numberOfViews = 500,
                 recommended = 0,
-                isLiked = false
+                isLiked = false,
+                address = ""
             ),
             Experience(
                 "2", "Nile Cruise",
                 description = "A cruise through the Nile",
                 "https://aroundegypt-production.s3.eu-central-1.amazonaws.com/2/buEw5QAr0MJf8HCLqd3TdlbJ8ETZOP-metaZnZDMUhJMjBNNkM3T1ZaVmVwak1sSWxpdEJPR2VvSzZ1WHJoaVQydC5qcGVn-.jpg?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIASZMRQEMKBKVP4NHO%2F20250303%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20250303T075136Z&X-Amz-SignedHeaders=host&X-Amz-Expires=172800&X-Amz-Signature=75bd1f766a5655f4ec47f1c7af0cf46251acc3314d06d87bcdc06970be753f6",
                 2000,
-                800, 1, false
+                800, 1, false,
+                ""
             )
         ),
         recentExperiencesState = listOf(
@@ -449,7 +455,8 @@ private fun HomeScreenPreview() {
                 description = "A safari in the desert",
                 "https://aroundegypt-production.s3.eu-central-1.amazonaws.com/51/VGaX2MatfRrmisLpAwch92Za4jjuNB-metaYjdtQm9mT2VLOUFWa2hScXFGWmlsUmxOWjlLU0lNdG5NcWM3dnVSUS5qcGVn-.jpg?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIASZMRQEMKBKVP4NHO%2F20250303%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20250303T075136Z&X-Amz-SignedHeaders=host&X-Amz-Expires=172800&X-Amz-Signature=831696b262c5c9799b9f144acb2e3666b8e050aba5e31a899ac0f7396e278866",
                 500,
-                300, 0, true
+                300, 0, true,
+                ""
             )
         ), emptyList(), { "" }, {}, {}
     )

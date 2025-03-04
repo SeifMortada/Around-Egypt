@@ -12,5 +12,6 @@ data class RecommendedExperienceEntity(
     val numberOfViews: Int,
     val numberOfLikes: Int,
     val isLiked: Boolean,
-    val recommended: Int
+    val recommended: Int,
+    val address: String
 )

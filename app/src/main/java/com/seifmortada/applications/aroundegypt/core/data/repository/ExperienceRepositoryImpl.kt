@@ -71,7 +71,7 @@ class ExperienceRepositoryImpl(
         return try {
             val response = experienceService.getSingleExperience(id)
             if (response.isSuccessful && response.body() != null) {
-                ExperienceResult.Success(response.body()!!.data.map { it.toExperience() }[0])
+                ExperienceResult.Success(response.body()!!.data.toExperience())
             } else {
                 ExperienceResult.Error("Failed to fetch experience")
             }
@@ -108,19 +108,4 @@ class ExperienceRepositoryImpl(
         }
     }
 
-    override suspend fun upsertRecentExperiences(experiences: List<Experience>) {
-        experienceDao.upsertRecentExperiences(experiences.map { it.toRecentExperiencesEntity() })
-    }
-
-    override suspend fun upsertRecommendedExperiences(experiences: List<Experience>) {
-        experienceDao.upsertRecommendedExperiences(experiences.map { it.toRecommendedExperienceEntity() })
-    }
-
-    override suspend fun clearRecentExperiences() {
-        experienceDao.clearRecentExperiences()
-    }
-
-    override suspend fun clearRecommendedExperiences() {
-        experienceDao.clearRecommendedExperiences()
-    }
 }

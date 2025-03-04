@@ -1,7 +1,7 @@
 package com.seifmortada.applications.aroundegypt.core.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.seifmortada.applications.aroundegypt.core.data.network.api.ApiConstant.BASE_URL
+import com.seifmortada.applications.aroundegypt.BuildConfig
 import com.seifmortada.applications.aroundegypt.core.data.network.api.ExperienceService
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -35,7 +35,7 @@ val networkModule = module {
     }
     single {
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(BuildConfig.BASE_URL)
             .client(get())
             .addConverterFactory(get<Json>().asConverterFactory("application/json".toMediaType()))
             .build()
