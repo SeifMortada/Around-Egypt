@@ -2,11 +2,8 @@
 
 ## 📹 App Demonstration
 
-[![Watch the video](https://github.com/user-attachments/assets/ba73fbb3-4529-4920-a1ad-d291be835162)
+https://github.com/user-attachments/assets/ba73fbb3-4529-4920-a1ad-d291be835162
 
-> Click on the image above to watch the video demonstration of the app.
-
----
 
 ## 📌 Overview
 
