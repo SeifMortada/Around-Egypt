@@ -408,7 +408,7 @@ private fun LikeSection(
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         IconButton(
-            enabled = if (experience.isLiked) false else true,
+            enabled = !experience.isLiked,
             onClick = { onLikeClick(experience.id) }) {
             Icon(
                 imageVector = if (experience.isLiked) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,

@@ -108,19 +108,4 @@ class ExperienceRepositoryImpl(
         }
     }
 
-    override suspend fun upsertRecentExperiences(experiences: List<Experience>) {
-        experienceDao.upsertRecentExperiences(experiences.map { it.toRecentExperiencesEntity() })
-    }
-
-    override suspend fun upsertRecommendedExperiences(experiences: List<Experience>) {
-        experienceDao.upsertRecommendedExperiences(experiences.map { it.toRecommendedExperienceEntity() })
-    }
-
-    override suspend fun clearRecentExperiences() {
-        experienceDao.clearRecentExperiences()
-    }
-
-    override suspend fun clearRecommendedExperiences() {
-        experienceDao.clearRecommendedExperiences()
-    }
 }

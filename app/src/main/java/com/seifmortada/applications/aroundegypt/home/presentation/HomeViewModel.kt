@@ -73,8 +73,7 @@ class HomeViewModel(
     }
 
     fun likeExperience(id: String) = viewModelScope.launch {
-        val result = experienceRepository.likeExperience(id)
-        when (result) {
+        when (val result = experienceRepository.likeExperience(id)) {
             is ExperienceResult.Error -> {
                 _errorState.update { result.errorMessage }
                 _loadingState.update { false }

@@ -25,9 +25,4 @@ interface ExperienceDao {
     @Query("UPDATE Recent_Experience_Table SET numberOfLikes =:newLikesCount,isLiked =:newIsLiked,numberOfViews =numberOfViews + 1 WHERE experienceId = :id")
     suspend fun updateRecentExperience(id: String, newLikesCount: String,newIsLiked: Boolean)
 
-    @Query("DELETE FROM Recent_Experience_Table")
-    suspend fun clearRecentExperiences()
-
-    @Query("DELETE FROM Recommended_Experience_Table")
-    suspend fun clearRecommendedExperiences()
 }

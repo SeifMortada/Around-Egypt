@@ -40,8 +40,7 @@ class DetailViewModel(private val repository: ExperienceRepository) : ViewModel(
         }
     }
     fun likeExperience(id: String) = viewModelScope.launch {
-        val result = repository.likeExperience(id)
-        when (result) {
+        when (val result = repository.likeExperience(id)) {
             is ExperienceResult.Error -> {
                 _errorState.update { result.errorMessage }
                 _loadingState.update { false }

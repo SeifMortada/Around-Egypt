@@ -173,7 +173,7 @@ private fun LikeButton(
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
-            enabled = if (isLiked) false else true,
+            enabled = !isLiked,
             onClick = {
                 isLiked = true
                 onLikeClick(experienceId)
