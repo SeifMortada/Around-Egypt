@@ -7,16 +7,27 @@ import androidx.room.Upsert
 @Dao
 interface ExperienceDao {
 
-    @Query("SELECT * FROM Experience_Table")
-    suspend fun getRecommendedExperiences(): List<ExperienceEntity>
+    @Query("SELECT * FROM Recommended_Experience_Table")
+    suspend fun getRecommendedExperiences(): List<RecommendedExperienceEntity>
+
+    @Query("SELECT * FROM Recent_Experience_Table")
+    suspend fun getRecentExperiences(): List<RecentExperiencesEntity>
 
     @Upsert
-    suspend fun upsertExperiences(experiences: List<ExperienceEntity>)
+    suspend fun upsertRecommendedExperiences(experiences: List<RecommendedExperienceEntity>)
 
-    @Query("SELECT * FROM Experience_Table WHERE experienceId = :id")
-    suspend fun getSingleExperience(id: String): ExperienceEntity
+    @Upsert
+    suspend fun upsertRecentExperiences(experiences: List<RecentExperiencesEntity>)
 
-    @Query("DELETE FROM Experience_Table")
-    suspend fun clearExperiences()
+    @Query("UPDATE Recommended_Experience_Table SET numberOfLikes =:newLikesCount,isLiked =:newIsLiked ,numberOfViews =numberOfViews + 1 WHERE experienceId = :id")
+    suspend fun updateRecommendedExperience(id: String, newLikesCount: String,newIsLiked: Boolean)
 
+    @Query("UPDATE Recent_Experience_Table SET numberOfLikes =:newLikesCount,isLiked =:newIsLiked,numberOfViews =numberOfViews + 1 WHERE experienceId = :id")
+    suspend fun updateRecentExperience(id: String, newLikesCount: String,newIsLiked: Boolean)
+
+    @Query("DELETE FROM Recent_Experience_Table")
+    suspend fun clearRecentExperiences()
+
+    @Query("DELETE FROM Recommended_Experience_Table")
+    suspend fun clearRecommendedExperiences()
 }

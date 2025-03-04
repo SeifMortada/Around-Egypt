@@ -5,8 +5,6 @@ import com.seifmortada.applications.aroundegypt.core.data.local.ExperienceDataba
 import com.seifmortada.applications.aroundegypt.core.data.repository.ExperienceRepositoryImpl
 import com.seifmortada.applications.aroundegypt.core.domain.ExperienceRepository
 import org.koin.android.ext.koin.androidApplication
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val coreModule = module {
@@ -17,10 +15,7 @@ val coreModule = module {
     single {
         get<ExperienceDatabase>().dao
     }
-
-    single {
-        networkModule
+    single<ExperienceRepository>{
+        ExperienceRepositoryImpl(experienceService = get(), experienceDao = get())
     }
-
-    singleOf(::ExperienceRepositoryImpl).bind<ExperienceRepository>()
 }

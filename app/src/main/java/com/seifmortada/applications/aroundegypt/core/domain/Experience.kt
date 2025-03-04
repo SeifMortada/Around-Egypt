@@ -9,5 +9,7 @@ data class Experience(
     val description: String,
     val imgSrc: String,
     val numberOfViews: Int,
-    val numberOfLikes: Int
+    val numberOfLikes: Int,
+    val recommended: Int,
+    val isLiked: Boolean
 )
