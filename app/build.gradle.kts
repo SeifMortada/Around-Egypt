@@ -103,6 +103,8 @@ dependencies {
     testImplementation(libs.mockwebserver)
     testImplementation(libs.mockk)
     debugImplementation(libs.ui.test.manifest)
+    testImplementation(libs.turbine)
+
 
     // Instrumented Tests
     androidTestImplementation(libs.androidx.junit)

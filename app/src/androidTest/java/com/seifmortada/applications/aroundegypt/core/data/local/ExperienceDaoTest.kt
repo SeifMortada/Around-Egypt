@@ -22,12 +22,12 @@ class ExperienceDaoTest {
 
     private lateinit var database: ExperienceDatabase
     private lateinit var dao: ExperienceDao
-    val recommendedExperiences = listOf(
+    private val recommendedExperiences = listOf(
         RecommendedExperienceEntity(
             "1", "Title 1", "desc 1", "URL1",
             10, 5, false, 1, "Address 1"
         ))
-    val recentExperiences = listOf(
+    private val recentExperiences = listOf(
         RecentExperiencesEntity(
             "1", "Title 1", "desc 1", "URL1",
             10, 5, 1, false, "Address 1"
