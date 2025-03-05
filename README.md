@@ -1,6 +1,6 @@
 # Around Egypt - Android App
 
-## 📹 App Demonstration
+## 🎥 App Demonstration
 
 https://github.com/user-attachments/assets/ba73fbb3-4529-4920-a1ad-d291be835162
 
@@ -19,7 +19,9 @@ https://github.com/user-attachments/assets/ba73fbb3-4529-4920-a1ad-d291be835162
 - **Room Database** - Stores data locally.
 - **Kotlin Coroutines** - Manages background tasks.
 - **StateFlow & SharedFlow** - Handles reactive data updates.
-- **Unit Testing & Instrumentation Testing** - Improves app reliability.
+- **Unit Testing & Instrumentation Testing** - Ensures app reliability.
+- **MockK** - Used for mocking dependencies in unit tests.
+- **Turbine** - Used for testing Kotlin Flows.
 
 ---
 
@@ -33,3 +35,16 @@ The project is structured into modules for better organization:
 
 This modular structure makes the app scalable and easy to maintain.
 
+---
+
+## ✅ Testing
+
+The app includes unit tests to ensure functionality:
+
+- **DetailViewModelTest**
+- **DaoTesting**
+- **ExperienceRepositoryTest**
+- **SearchUseCaseTesting**
+- **HomeViewModelTest**
+
+These tests ensure core functionalities such as fetching experiences, liking experiences, repository interactions, and search functionality work as expected. **MockK** is used for mocking dependencies, and **Turbine** is used for Flow assertions.
