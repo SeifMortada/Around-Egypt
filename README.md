@@ -37,14 +37,6 @@ This modular structure makes the app scalable and easy to maintain.
 
 ---
 
-## ✅ Testing
+✅ Testing
+The app includes unit and instrumentation tests to verify core functionalities, such as fetching experiences, liking experiences, repository interactions, and search functionality. MockK is used for mocking dependencies, and Turbine is used for Flow assertions, ensuring reliable and predictable results.
 
-The app includes unit tests to ensure functionality:
-
-- **DetailViewModelTest**
-- **DaoTesting**
-- **ExperienceRepositoryTest**
-- **SearchUseCaseTesting**
-- **HomeViewModelTest**
-
-These tests ensure core functionalities such as fetching experiences, liking experiences, repository interactions, and search functionality work as expected. **MockK** is used for mocking dependencies, and **Turbine** is used for Flow assertions.
