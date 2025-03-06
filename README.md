@@ -2,7 +2,11 @@
 
 ## 🎥 App Demonstration
 
-https://github.com/user-attachments/assets/ba73fbb3-4529-4920-a1ad-d291be835162
+
+https://github.com/user-attachments/assets/761b38fd-f338-4df3-84ee-edabcad30d8a
+
+
+
 
 ## 📌 Overview
 
