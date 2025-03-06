@@ -34,6 +34,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Size
+import com.seifmortada.applications.aroundegypt.core.ui.components.ErrorScreen
+import com.seifmortada.applications.aroundegypt.core.ui.components.ExperienceViewCount
+import com.seifmortada.applications.aroundegypt.core.ui.components.LoadingScreen
 
 @Composable
 fun DetailRoute(
@@ -61,23 +64,9 @@ fun DetailScreen(
     modifier: Modifier = Modifier
 ) {
     when {
-        loadingState -> LoadingState()
-        errorState != null -> ErrorState(errorState)
+        loadingState -> LoadingScreen()
+        errorState != null -> ErrorScreen(errorState)
         experience != null -> ExperienceContent(experience, onLikeClick)
-    }
-}
-
-@Composable
-private fun LoadingState() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator()
-    }
-}
-
-@Composable
-private fun ErrorState(errorMessage: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "Error: $errorMessage", color = Color.Red)
     }
 }
 
@@ -127,7 +116,7 @@ private fun ExperienceImage(imageUrl: String, views: Int) {
                     .align(Alignment.BottomStart)
                     .padding(8.dp)
             ) {
-                ViewCount(views)
+                ExperienceViewCount(views)
             }
         }
     }
@@ -207,23 +196,6 @@ private fun ExperienceDescription(description: String) {
         fontSize = 16.sp,
         modifier = Modifier.padding(horizontal = 12.dp)
     )
-}
-
-@Composable
-private fun ViewCount(views: Int) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.RemoveRedEye,
-            contentDescription = "Views",
-            modifier = Modifier.size(16.dp),
-            tint = Color.White
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(text = views.toString(), fontSize = 14.sp, color = Color.White)
-    }
 }
 
 @Preview

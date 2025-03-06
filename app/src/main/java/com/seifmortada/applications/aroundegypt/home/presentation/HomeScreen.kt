@@ -38,6 +38,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,6 +55,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -66,6 +70,10 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Size
 import com.seifmortada.applications.aroundegypt.core.domain.Experience
+import com.seifmortada.applications.aroundegypt.core.ui.components.ErrorScreen
+import com.seifmortada.applications.aroundegypt.core.ui.components.ExperienceLikesSection
+import com.seifmortada.applications.aroundegypt.core.ui.components.ExperienceViewCount
+import com.seifmortada.applications.aroundegypt.core.ui.components.LoadingScreen
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -92,6 +100,7 @@ fun HomeRoute(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     loadingState: Boolean,
@@ -106,10 +115,17 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     var searchQuery by remember { mutableStateOf("") }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
+        state = rememberTopAppBarState()
+    )
 
-    Scaffold(modifier = Modifier.fillMaxSize(),
+    Scaffold(
+        modifier = Modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .fillMaxSize(),
         topBar = {
             SearchTopAppbar(
+                scrollBehavior = scrollBehavior,
                 searchQuery = searchQuery,
                 onSearchQueryChanged = {
                     if (it.isBlank()) {
@@ -122,96 +138,157 @@ fun HomeScreen(
                 },
                 onSearchTriggered = {}
             )
-        })
-    { paddingValues ->
-        Column(
+        }
+    ) { paddingValues ->
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            verticalArrangement = Arrangement.Center,
+                .background(MaterialTheme.colorScheme.background)
+                .padding(paddingValues)
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            if (loadingState) Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) { CircularProgressIndicator() }
-            if (errorState != null) {
-                Box {
-                    Text(text = "Error: $errorState")
-                }
-            } else if (searchExperiencesState.isNotEmpty()) {
-                Text(
-                    text = "Searched Experiences",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(16.dp)
+            when {
+                loadingState -> LoadingScreen()
+                errorState != null -> ErrorScreen(errorState)
+                searchExperiencesState.isNotEmpty() -> SearchedExperiencesSection(
+                    searchExperiencesState,
+                    onLikeClick,
+                    onExperienceClick
                 )
-                Box(modifier = Modifier.weight(1f)) {
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        items(searchExperiencesState) { item ->
-                            ExperienceCard(
-                                experience = item,
-                                onLikeClick,
-                                onExperienceClick
-                            )
-                        }
-                    }
-                }
-            } else {
-                Text(
-                    text = "Welcome!",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(16.dp)
+                else -> DefaultContent(
+                    recommendedExperiencesState,
+                    recentExperiencesState,
+                    onLikeClick,
+                    onExperienceClick
                 )
-                Text(
-                    text = "Now you can explore any experience in 360 degrees and get all the details about it all in one place",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-                Text(
-                    text = "Recommended Experiences",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(16.dp)
-                )
-                LazyRow(modifier = Modifier.fillMaxWidth()) {
-                    items(recommendedExperiencesState) { item ->
-                        ExperienceCard(experience = item, onLikeClick, onExperienceClick)
-                    }
-                }
-
-                Text(
-                    text = "Most Recent Experiences",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(16.dp)
-                )
-                Box(modifier = Modifier.weight(1f)) {
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        items(recentExperiencesState) { item ->
-                            ExperienceCard(
-                                experience = item,
-                                onLikeClick,
-                                onExperienceClick
-                            )
-                        }
-                    }
-                }
             }
         }
     }
 }
 
+@Composable
+private fun SearchedExperiencesSection(
+    searchExperiencesState: List<Experience>,
+    onLikeClick: (String) -> Unit,
+    onExperienceClick: (String) -> Unit
+) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+            Text(
+                text = "Searched Experiences",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+        items(searchExperiencesState) { item ->
+            ExperienceCard(
+                experience = item,
+                onLikeClick,
+                onExperienceClick
+            )
+        }
+    }
+}
+
+@Composable
+private fun DefaultContent(
+    recommendedExperiencesState: List<Experience>,
+    recentExperiencesState: List<Experience>,
+    onLikeClick: (String) -> Unit,
+    onExperienceClick: (String) -> Unit
+) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+            WelcomeSection()
+        }
+        item {
+            RecommendedExperiencesSection(
+                recommendedExperiencesState,
+                onLikeClick,
+                onExperienceClick
+            )
+        }
+        item {
+            RecentExperiencesSection(
+                recentExperiencesState,
+                onLikeClick,
+                onExperienceClick
+            )
+        }
+    }
+}
+
+@Composable
+private fun WelcomeSection() {
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = "Welcome!",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Now you can explore any experience in 360 degrees and get all the details about it all in one place",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+private fun RecommendedExperiencesSection(
+    recommendedExperiencesState: List<Experience>,
+    onLikeClick: (String) -> Unit,
+    onExperienceClick: (String) -> Unit
+) {
+    Column {
+        Text(
+            text = "Recommended Experiences",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(16.dp)
+        )
+        LazyRow(modifier = Modifier.fillMaxWidth()) {
+            items(recommendedExperiencesState) { item ->
+                ExperienceCard(experience = item, onLikeClick, onExperienceClick)
+            }
+        }
+    }
+}
+@Composable
+private fun RecentExperiencesSection(
+    recentExperiencesState: List<Experience>,
+    onLikeClick: (String) -> Unit,
+    onExperienceClick: (String) -> Unit
+) {
+    Column {
+        Text(
+            text = "Most Recent Experiences",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(16.dp)
+        )
+        recentExperiencesState.forEach { item ->
+            ExperienceCard(
+                experience = item,
+                onLikeClick,
+                onExperienceClick
+            )
+        }
+    }
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchTopAppbar(
+    scrollBehavior: TopAppBarScrollBehavior,
     searchQuery: String,
     onSearchQueryChanged: (String) -> Unit,
     onSearchTriggered: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     TopAppBar(
+        scrollBehavior = scrollBehavior,
         title = {
             SearchTextField(
                 onSearchQueryChanged = onSearchQueryChanged,
@@ -263,7 +340,7 @@ fun ExperienceCard(
                         .align(Alignment.BottomStart)
                         .padding(8.dp)
                 ) {
-                    ViewCount(experience.numberOfViews)
+                    ExperienceViewCount(experience.numberOfViews)
                 }
             }
         }
@@ -274,7 +351,7 @@ fun ExperienceCard(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             TitleSection(experience.title)
-            LikeSection(experience, onLikeClick)
+            ExperienceLikesSection(experience, onLikeClick)
         }
     }
 }
@@ -383,43 +460,6 @@ private fun TitleSection(title: String) {
         modifier = Modifier.padding(8.dp)
     )
 }
-
-@Composable
-private fun ViewCount(views: Int) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.RemoveRedEye,
-            contentDescription = "Views",
-            modifier = Modifier.size(16.dp),
-            tint = Color.White
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(text = views.toString(), fontSize = 14.sp, color = Color.White)
-    }
-}
-
-@Composable
-private fun LikeSection(
-    experience: Experience,
-    onLikeClick: (String) -> Unit
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        IconButton(
-            enabled = !experience.isLiked,
-            onClick = { onLikeClick(experience.id) }) {
-            Icon(
-                imageVector = if (experience.isLiked) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                contentDescription = "Like",
-                tint = Color.Red
-            )
-        }
-        Text(text = experience.numberOfLikes.toString(), fontSize = 14.sp)
-    }
-}
-
 
 @Preview
 @Composable
